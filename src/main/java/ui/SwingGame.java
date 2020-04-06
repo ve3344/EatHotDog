@@ -7,7 +7,6 @@ import java.awt.KeyEventPostProcessor;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.KeyEvent;
 import java.awt.image.ImageObserver;
-import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -26,28 +25,29 @@ public class SwingGame implements ImageObserver {
     JFrame window;
     Graphics graphics;//绘画器
 
-    Map.Painter painter=new Map.Painter() {
+    Map.Painter painter = new Map.Painter() {
         @Override
         public void paintHotDog(HotDog hotDog) {
             if (graphics != null) {
-                graphics.drawImage(hotDogImage,(int)hotDog.getX(),(int)(map.getHeight()-hotDog.getY()-hotDog.getH()*1),(int)hotDog.getW(),(int)hotDog.getH(),SwingGame.this);
+                graphics.drawImage(hotDogImage, (int) hotDog.getX(), (int) (map.getHeight() - hotDog.getY() - hotDog.getH() * 1), (int) hotDog.getW(), (int) hotDog.getH(), SwingGame.this);
             }
         }
 
         @Override
         public void paintMan(Man man) {
             if (graphics != null) {
-                graphics.drawImage(manImage,(int)man.getX(),(int)(map.getHeight()-man.getY()-man.getH()*1),(int)man.getW(),(int)man.getH(),SwingGame.this);
+                graphics.drawImage(manImage, (int) man.getX(), (int) (map.getHeight() - man.getY() - man.getH() * 1), (int) man.getW(), (int) man.getH(), SwingGame.this);
             }
         }
-        @Override
+
         public void painGround(float ground) {
             if (graphics != null) {
                 graphics.setColor(Color.GREEN);
-                graphics.drawLine(0,(int)(map.getHeight()-ground),(int)map.getWidth(),(int)(map.getHeight()-ground));
+                graphics.drawLine(0, (int) (map.getHeight() - ground), (int) map.getWidth(), (int) (map.getHeight() - ground));
             }
         }
     };
+
     SwingGame() {
         window = new JFrame();
         window.setSize(800, 800);
@@ -55,38 +55,37 @@ public class SwingGame implements ImageObserver {
 
 
         try {
-            hotDogImage = ImageIO.read(new File("D:\\Development\\idea\\JavaGame\\src\\main\\resources\\hotdog.png"));
-            manImage = ImageIO.read(new File("D:\\Development\\idea\\JavaGame\\src\\main\\resources\\man.png"));
+            hotDogImage = ImageIO.read(SwingGame.class.getResource("/hotdog.png"));
+            manImage = ImageIO.read(SwingGame.class.getResource("/man.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Man man = new Man(manImage.getWidth(this)*SCALE, manImage.getHeight(this)*SCALE);
+        Man man = new Man(manImage.getWidth(this) * SCALE, manImage.getHeight(this) * SCALE);
         map.setMan(man);
     }
 
 
-
     void run() {
 
-        window.setContentPane(new JPanel(){
+        window.setContentPane(new JPanel() {
             @Override
             public void paint(Graphics g) {
                 super.paint(g);
-                graphics=g;
+                graphics = g;
                 map.paint(painter);
                 String text = "srore:" + map.getMan().getScore();
                 g.setColor(Color.BLUE);
-                g.drawChars(text.toCharArray(),0,text.length(),30,30);
+                g.drawChars(text.toCharArray(), 0, text.length(), 30, 30);
             }
         });
         KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
         manager.addKeyEventPostProcessor(new KeyEventPostProcessor() {
             @Override
             public boolean postProcessKeyEvent(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_LEFT){
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
                     map.getMan().moveLeft(map);
                 }
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT){
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     map.getMan().moveRight(map);
 
                 }
@@ -95,7 +94,7 @@ public class SwingGame implements ImageObserver {
         });
 
         window.setVisible(true);
-        while (true){
+        while (true) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -103,7 +102,7 @@ public class SwingGame implements ImageObserver {
             }
             window.repaint();
             map.run();
-            map.generateHotDog(hotDogImage.getWidth(null)*SCALE,hotDogImage.getHeight(SwingGame.this)*SCALE);
+            map.generateHotDog(hotDogImage.getWidth(null) * SCALE, hotDogImage.getHeight(SwingGame.this) * SCALE);
         }
 
     }
